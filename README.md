@@ -39,14 +39,9 @@ guide-category: collections
 
 ## What you'll learn
 
-You’ll learn how to create and run a simple cloud native microservice. Then, you’ll update the microservice that you created and deploy it to
-Kubernetes or Knative. This process will be done by using the Spring Boot application stack. Deployment to Knative is optional depending on 
-whether you want to Scale to Zero.
+In this guide, you’ll learn how to create and run a simple cloud native microservice based on the Spring Boot application stack. You’ll learn how to configure your development environment, update the microservice that you created and deploy it to Kubernetes or serverless. Deployment to serverless is optional depending on whether you want to Scale to Zero.
 
-The Spring Boot Collection provides an application stack that enables the development and optimization of microservices.
-With application stacks, developers don’t need to manage full software development stacks or be experts on underlying container
-technologies or Kubernetes. Application stacks are customized for specific enterprises to incorporate their company standards
-and technology choices.
+The Spring Boot application stack enables the development and optimization of microservices. With application stacks, developers don’t need to manage full software development stacks or be experts on underlying container technologies or Kubernetes. Application stacks are customized for specific enterprises to incorporate their company standards and technology choices.
 
 Applications in this guide are written based on the Spring Boot API specifications, built and run with [Apache Tomcat](http://tomcat.apache.org/), and deployed to Kubernetes through a modern DevOps toolchain that is triggered in Git.
 
@@ -60,10 +55,9 @@ Applications in this guide are written based on the Spring Boot API specificatio
 
 - [Docker](https://docs.docker.com/get-started/) must be installed.
 - [Appsody](https://appsody.dev/docs/getting-started/installation) must be installed.
-- *Optional:* If your organisation has customized application stacks, you need the URL that points to the `index.yaml` file for the stack hub.
+- *Optional:* If your organisation has customized application stacks, you need the URL that points to the `index.yaml` configuration file.
 - *Optional*: If you are testing multiple microservices together, you must have access to a local Kubernetes cluster for local development.
-If you are using Docker Desktop, you can enable Kubernetes from the menu by selecting *Preferences* -> *Kubernetes* -> *Enable Kubernetes*.
-Other options include [Minishift](https://www.okd.io/minishift/) or [Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/).
+If you are using Docker Desktop, you can enable Kubernetes from the menu by selecting *Preferences* -> *Kubernetes* -> *Enable Kubernetes*. Other options include [Minishift](https://www.okd.io/minishift/) or [Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/). If you want to use remote cluster development, use Codewind.
 
 <!--
 // =================================================================================================
@@ -83,20 +77,20 @@ Other options include [Minishift](https://www.okd.io/minishift/) or [Minikube](h
 
 To check the repositories that you can already access, run the following command:
 
-```
+```shell
 appsody repo list
 ```
 
 You see output similar to the following example:
 
-```
+```shell
 NAME        URL
 *incubator https://github.com/appsody/stacks/releases/latest/download/incubator-index.yaml
 ```
 
-Next, run the following command to add the URL for your stack hub index file:
+Next, run the following command to add the URL for your stack configuration file:
 
-```
+```shell
 appsody repo add <my-org-stack> <URL>
 ```
 
@@ -105,43 +99,40 @@ your stack hub index file.
 
 **Note:** If you do not have a stack hub that contains customized, pre-configured application stacks, you can skip to
 [Initializing your project](#initializing-your-project) and develop your app based on the public application stack
-for Node.js Express.
+for Spring Boot.
 
-Check the repositories again by running `appsody repo list` to see that your stack hub was added. In the
-following examples, the stack hub is called `abc-stacks` and the URL is `https://github.com/abc.inc/stacks/index.yaml`:
+Check the repositories again by running `appsody repo list` to see that your stack hub was added. In the following examples, the stack hub is called `abc-stacks` and the URL is `https://github.com/abc.inc/stacks/index.yaml`:
 
-```
+```shell
 NAME        URL
 *incubator https://github.com/appsody/stacks/releases/latest/download/incubator-index.yaml
 abc-stacks https://github.com/abc.inc/stacks/index.yaml
 ```
 
-In this example, the asterisk (\*) shows that `incubator` is the default repository. Run the following command to set `abc-stacks`
-as the default repository:
+In this example, the asterisk (\*) shows that `incubator` is the default repository. Run the following command to set `abc-stacks` as the default repository:
 
-```
+```shell
 appsody repo set-default abc-stacks
 ```
 
 Check the available repositories again by running `appsody repo list` to see that the default is updated:
 
-```
+```shell
 NAME        URL
-incubator https://github.com/appsody/stacks/releases/latest/download/incubator-index.yaml
+incubator   https://github.com/appsody/stacks/releases/latest/download/incubator-index.yaml
 *abc-stacks https://github.com/abc.inc/stacks/index.yaml
 ```
 
-**Recommendation**: To avoid initializing projects that are based on the public application stacks, it's best
-to remove `incubator` from the list. Run the following command to remove the `incubator` repository:
+**Recommendation**: To avoid initializing projects that are based on the public application stacks, it's best to remove `incubator` from the list. Run the following command to remove the `incubator` repository:
 
-```
+```shell
 appsody repo remove incubator
 ```
 
 Check the available repositories again by running `appsody repo list` to see that `incubator` is removed:
 
-```
-NAME     	URL
+```shell
+NAME        URL
 *abc-stacks https://github.com/abc.inc/stacks/index.yaml
 ```
 
@@ -157,20 +148,20 @@ Your development environment is now configured to use your customized applicatio
 
 First, create a directory that will contain the project:
 
-``` 
+```shell
 mkdir -p ~/projects/simple-spring-boot2
 cd ~/projects/simple-spring-boot2
-``` 
+```
 
 Run the following command to initialize your Spring Boot project:
 
-``` 
+```shell
 appsody init java-spring-boot2
-``` 
+```
 
 The output from the command varies depending on whether you have an installation of Java on your system. The following output is from a system that has Java installed:
 
-``` 
+```shell
 Running appsody init...
 Downloading java-spring-boot2 template project from https://github.com/kabanero-io/collections/releases/download/0.5.0/incubator.java-spring-boot2.v0.3.9.templates.default.tar.gz
 Download complete. Extracting files from java-spring-boot2.tar.gz
@@ -184,7 +175,7 @@ Running command: docker[rm my-project-extract -f]
 Project extracted to /home/username/projects/simple-spring-boot2/.appsody_init
 Running command: ./.appsody-init.sh[]
 Successfully initialized Appsody project
-``` 
+```
 
 Your project is now initialized.
 
@@ -219,20 +210,19 @@ This project contains the following artifacts:
 
 Run the following command to start the development environment:
 
-``` 
+```shell
 appsody run
-``` 
+```
 
-The CLI launches a local Docker image that contains an Apache Tomcat server that hosts the microservice.
-After some time, you see a message similar to the following example:
+The CLI launches a local Docker image that contains an Apache Tomcat server that hosts the microservice. After some time, you see a message similar to the following example:
 
-``` 
+```shell
 [Container] 2019-09-12 17:28:44.066  INFO 171 --- [  restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 4 endpoint(s) beneath base path '/actuator'
 [Container] 2019-09-12 17:28:44.205  INFO 171 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
 [Container] 2019-09-12 17:28:44.209  INFO 171 --- [  restartedMain] application.Main                         : Started Main in 6.051 seconds (JVM running for 6.923)
-``` 
+```
 
-This message indicates that the Tomcat server is started. Browse to http://localhost:8080 and you can see the splash screen.
+This message indicates that the Tomcat server is started. Browse to `http://localhost:8080` and you can see the splash screen.
 
 ![Browser showing splash screen](/img/guide/collection-springboot2-splashscreen.png)
 
@@ -244,13 +234,13 @@ You are now ready to begin developing your application.
 // =================================================================================================
 -->
 
-##  Creating and updating the application
+## Creating and updating the application
 
 In this example, you will create a new REST endpoint and add it to the application.
 
 Create an `ExampleEndpoint.java` class in the `src/main/java/application` directory. Open the file, add the following code, and save it:
 
-``` 
+```java
 package application;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -264,11 +254,11 @@ public class ExampleEndpoint {
         return "This is an example";
     }
 }
-``` 
+```
 
 After you save, the source compiles and the application updates. You see messages similar to the following example:
 
-```
+```shell
 [Container] Running: /project/java-spring-boot2-build.sh recompile
 [Container] Compile project in the foreground
 [Container] > mvn compile
@@ -312,7 +302,7 @@ After you save, the source compiles and the application updates. You see message
 [Container] 2019-09-12 17:34:39.788  INFO 171 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
 ```
 
-If you browse to the http://localhost:8080/example URL, the endpoint response is displayed, as shown in the following image:
+If you browse to the `http://localhost:8080/example` URL, the endpoint response is displayed, as shown in the following image:
 
 ![Browser showing example endpoint](/img/guide/collection-springboot2-example.png[)
 
@@ -340,62 +330,57 @@ You can also deploy the system, application, and the associated services in a pr
 
 ### Testing locally on Kubernetes
 
-After you finish writing your application code, the CLI makes it easy to deploy directly to a Kubernetes cluster for further local testing.
-The ability to deploy directly to a Kubernetes cluster is valuable when you want to test multiple microservices together or test with services that the application requires.
+After you finish writing your application code, the CLI makes it easy to deploy directly to a Kubernetes cluster for further local testing. The ability to deploy directly to a Kubernetes cluster is valuable when you want to test multiple microservices together or test with services that the application requires.
 
 Ensure that your `kubectl` command is configured with cluster details and run the following command to deploy the application:
 
-``` 
+```shell
 appsody deploy
-``` 
+```
 
-This command builds a new Docker image that is optimized for production deployment and deploys the image to your local Kubernetes cluster.
-After some time you see a message similar to the following example:
+This command builds a new Docker image that is optimized for production deployment and deploys the image to your local Kubernetes cluster. After some time you see a message similar to the following example:
 
-``` 
+```shell
 Deployed project running at http://localhost:30262
-``` 
+```
 
 Run the following command to check the status of the application pods:
 
-``` 
+```shell
 kubectl get pods
-``` 
+```
 
 In the following example output, you can see that a `simple-spring-boot2` pod is running:
 
-``` 
+```shell
 NAME                                   READY   STATUS    RESTARTS   AGE
 appsody-operator-859b97bb98-xm8nl      1/1     Running   1          8d
 simple-spring-boot2-77d6868765-bhd8x   1/1     Running   0          3m21s
-``` 
+```
 
-After the `simple-spring-boot2` pod starts, go to the URL that was returned when you ran the `appsody deploy` command,
-and you see the splash screen. To see the response from your application, point your browser to
-the `<URL_STRING>/example` URL, where `<URL_STRING>` is the URL that was returned. For example, http://localhost:30262
-was returned in the previous example. Go to the http://localhost:30262/example URL to see the deployed application response.
+After the `simple-spring-boot2` pod starts, go to the URL that was returned when you ran the `appsody deploy` command, and you see the splash screen. To see the response from your application, point your browser to the `<URL_STRING>/example` URL, where `<URL_STRING>` is the URL that was returned. For example, `http://localhost:30262` was returned in the previous example. Go to the `http://localhost:30262/example` URL to see the deployed application response.
 
 Use the following command to stop the deployed application:
 
-``` 
+```shell
 appsody deploy delete
-``` 
+```
 
 After you run this command and the deployment is deleted, you see the following message:
 
-``` 
+```shell
 Deployment deleted
-``` 
+```
 
 <!--
 // =================================================================================================
-// Testing with Knative Serving
+// Testing with serverless
 // =================================================================================================
---> 
+-->
 
-### Testing with Knative serving
+### Testing with serverless
 
-You can choose to test an application that is deployed with Knative Serving to take advantage of Scale to Zero. Not all applications can be written to effectively take advantage of Scale to Zero. The Kabanero operator-based installation configures Knative on the Kubernetes cluster. Because of the resources that are required to run Knative and its dependencies, testing locally can be difficult. Publish to Kubernetes by using pipelines that are described later in the guide. Your operations team can configure the pipelines so that Knative Serving is enabled for deployment.
+You can choose to test an application that is deployed with serverless to take advantage of Scale to Zero. Not all applications can be written to effectively take advantage of Scale to Zero. The Kabanero operator-based installation configures serverless on the Kubernetes cluster. Because of the resources that are required to run serverless and its dependencies, testing locally can be difficult. Publish to Kubernetes by using pipelines that are described later in the guide. Your operations team can configure the pipelines so that serverless is enabled for deployment.
 
 <!--
 // =================================================================================================
